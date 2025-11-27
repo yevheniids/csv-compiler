@@ -113,7 +113,7 @@ function parseXlsx(filePath) {
         );
 
         if (skuColumn) {
-          console.log('Found SKU column in first row:', skuColumn);
+          //console.log('Found SKU column in first row:', skuColumn);
           break;
         }
       }
@@ -127,6 +127,7 @@ function parseXlsx(filePath) {
         const cellAddress = XLSX.utils.encode_cell({ r: 1, c: col });
         const cell = sheet[cellAddress];
         const headerValue = cell ? (cell.w || cell.v || '') : '';
+
         headerRow.push(headerValue);
       }
 
@@ -139,8 +140,8 @@ function parseXlsx(filePath) {
         if (index !== -1) {
           skuColumn = headerRow[index];
 
-          jsonData = XLSX.utils.sheet_to_json(sheet, { 
-            defval: '', 
+          jsonData = XLSX.utils.sheet_to_json(sheet, {
+            defval: '',
             range: 3,
             header: headerRow
           });
@@ -263,6 +264,22 @@ async function main() {
     }
   }
 
+  for (const [sku, data] of Object.entries(allData)) {
+    const nameValue = data['Name'] || data['name'];
+    const titleValue = data['Title'] || data['title'];
+
+    if (nameValue) {
+      if (titleValue !== undefined) {
+        data['Title'] = nameValue;
+      } else {
+        data['Title'] = nameValue;
+      }
+
+      delete data['Name'];
+      delete data['name'];
+    }
+  }
+
   const totalSKUs = Object.keys(allData).length;
   const withDocx = Object.values(allData).filter(d => d.fromDocx).length;
   const withTags = Object.values(allData).filter(d => d.fromTags).length;
@@ -282,7 +299,7 @@ async function main() {
 
   fs.writeFileSync(outputPath, JSON.stringify(allData, null, 2), 'utf8');
 
-  console.log(`Data extracted and saved to: ${outputPath}`);
+  //console.log(`Data extracted and saved to: ${outputPath}`);
 }
 
 main().catch(error => {
