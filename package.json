@@ -1,0 +1,20 @@
+{
+  "name": "product-compiler",
+  "version": "1.0.0",
+  "description": "Shopify CSV compiler",
+  "main": "src/1-extract-sku.js",
+  "scripts": {
+    "start": "node src/1-extract-sku.js && node src/2-merge-data.js && node src/3-generate-csv.js",
+    "step1": "node src/1-extract-sku.js",
+    "step2": "node src/2-merge-data.js",
+    "step3": "node src/3-generate-csv.js"
+  },
+  "keywords": ["shopify", "csv", "product", "import"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mammoth": "^1.6.0",
+    "xlsx": "^0.18.5",
+    "papaparse": "^5.4.1"
+  }
+}
