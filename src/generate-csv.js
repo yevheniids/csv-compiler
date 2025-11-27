@@ -64,7 +64,6 @@ function convertToCSVRow(data, metafieldColumns) {
     if (!isEmpty(value)) {
       if (csvColumn === 'Variant Weight') {
         const numValue = typeof value === 'number' ? value : parseFloat(String(value).replace(/[^0-9.]/g, ''));
-
         row[csvColumn] = isNaN(numValue) ? '' : String(numValue);
       } else if (typeof value === 'boolean') {
         row[csvColumn] = value ? 'True' : 'False';
@@ -76,6 +75,22 @@ function convertToCSVRow(data, metafieldColumns) {
     } else {
       row[csvColumn] = '';
     }
+  }
+
+  if (isEmpty(row['Variant SKU']) && !isEmpty(data['sku'])) {
+    row['Variant SKU'] = String(data['sku']);
+  }
+
+  if (isEmpty(row['Handle']) && !isEmpty(data['sku'])) {
+    row['Handle'] = String(data['sku']).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  }
+
+  if (isEmpty(row['Title']) && !isEmpty(data['description'])) {
+    const desc = String(data['description']).replace(/<[^>]+>/g, '').trim();
+    const firstSentence = desc.split(/[.!?]/)[0].trim();
+    row['Title'] = firstSentence || (data['sku'] ? String(data['sku']) : '');
+  } else if (isEmpty(row['Title']) && !isEmpty(data['sku'])) {
+    row['Title'] = String(data['sku']);
   }
 
   for (const metafieldColumn of metafieldColumns) {
