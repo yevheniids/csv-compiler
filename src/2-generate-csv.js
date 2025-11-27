@@ -62,13 +62,19 @@ function convertToCSVRow(data, metafieldColumns) {
     const value = data[jsonField];
 
     if (!isEmpty(value)) {
-      if (typeof value === 'boolean') {
+      if (csvColumn === 'Variant Weight') {
+        const numValue = typeof value === 'number' ? value : parseFloat(String(value).replace(/[^0-9.]/g, ''));
+
+        row[csvColumn] = isNaN(numValue) ? '' : String(numValue);
+      } else if (typeof value === 'boolean') {
         row[csvColumn] = value ? 'True' : 'False';
       } else if (typeof value === 'number') {
         row[csvColumn] = String(value);
       } else {
         row[csvColumn] = String(value);
       }
+    } else {
+      row[csvColumn] = '';
     }
   }
 
@@ -130,15 +136,22 @@ async function main() {
   }
 
   const metafieldColumns = Array.from(unmappedFields).map(fieldName => toMetafieldName(fieldName));
+  const allColumns = [
+    ...new Set([
+      ...Object.values(fieldMapping),
+      ...metafieldColumns
+    ])
+  ];
+
   const csvRows = [];
 
   for (const [sku, data] of Object.entries(extractedData)) {
     const row = convertToCSVRow(data, metafieldColumns);
-
     csvRows.push(row);
   }
 
   const csv = Papa.unparse(csvRows, {
+    columns: allColumns,
     header: true,
     skipEmptyLines: false
   });
