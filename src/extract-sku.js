@@ -280,26 +280,9 @@ async function main() {
     }
   }
 
-  const totalSKUs = Object.keys(allData).length;
-  const withDocx = Object.values(allData).filter(d => d.fromDocx).length;
-  const withTags = Object.values(allData).filter(d => d.fromTags).length;
-  const withTemplate = Object.values(allData).filter(d => d.fromTemplate).length;
-  const inAllFiles = Object.values(allData).filter(d =>
-    d.fromDocx && d.fromTags && d.fromTemplate
-  ).length;
-
-  // console.log('STATISTICS:');
-  // console.log(`Unique SKUs: ${totalSKUs}`);
-  // console.log(`With data from DOCX: ${withDocx}`);
-  // console.log(`With data from Tags: ${withTags}`);
-  // console.log(`With data from Template: ${withTemplate}`);
-  // console.log(`In all 3 files: ${inAllFiles}`);
-
-  const outputPath = path.join(outputDir, 'step1-extracted-data.json');
+  const outputPath = path.join(outputDir, 'extracted-data.json');
 
   fs.writeFileSync(outputPath, JSON.stringify(allData, null, 2), 'utf8');
-
-  //console.log(`Data extracted and saved to: ${outputPath}`);
 }
 
 main().catch(error => {

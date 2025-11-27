@@ -132,14 +132,14 @@ async function main() {
     process.exit(1);
   }
 
-  const step1Path = path.join(outputDir, 'step1-extracted-data.json');
+  const extractedDataPath = path.join(outputDir, 'extracted-data.json');
 
-  if (!fs.existsSync(step1Path)) {
-    console.error('Step 1 output not found. Please run step 1 first.');
+  if (!fs.existsSync(extractedDataPath)) {
+    console.error('Extracted data not found. Please run extract-sku.js first.');
     process.exit(1);
   }
 
-  const extractedData = JSON.parse(fs.readFileSync(step1Path, 'utf8'));
+  const extractedData = JSON.parse(fs.readFileSync(extractedDataPath, 'utf8'));
   const unmappedFields = new Set();
 
   for (const [sku, data] of Object.entries(extractedData)) {
