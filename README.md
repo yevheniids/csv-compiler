@@ -6,8 +6,9 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 
 Create `.env` file:
 
-SHOPIFY_STORE=you-shop.myshopify.com
-SHOPIFY_API_KEY=altera_api_key
+- SHOPIFY_STORE=you-shop.myshopify.com
+
+- SHOPIFY_API_KEY=altera_api_key
 
 ## Usage
 
@@ -20,14 +21,12 @@ SHOPIFY_API_KEY=altera_api_key
 
 1. Connect your store via CLI. Enter the command in the terminal:
 
-    npx altera shop add your-shop.myshopify.com
+   npx altera shop add your-shop.myshopify.com
 
-    Enter your API key in the terminal.
-
+   Enter your API key in the terminal.
 2. Check the connection:
 
-    npx altera shop test pros-cons-shop-test.myshopify.com
-
+   npx altera shop test pros-cons-shop-test.myshopify.com
 
 ## Test Results
 
