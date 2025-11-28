@@ -7,7 +7,6 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 Create `.env` file:
 
 - SHOPIFY_STORE=you-shop.myshopify.com
-
 - SHOPIFY_API_KEY=altera_api_key
 
 ## Usage
@@ -15,7 +14,8 @@ Create `.env` file:
 1. Place source files in `input/` folder
 2. Extract files `node src/extract-sku.js`
 3. Generate CSV: `node src/generate-csv.js`
-4. Import to Shopify: `node src/push-csv.js`
+4. Add images from Google Drive: `node src/google-drive-images.js`
+5. Import to Shopify: `node src/push-csv.js`
 
 ## Manual Connection Testing
 
@@ -30,4 +30,5 @@ Create `.env` file:
 
 ## Test Results
 
-https://www.awesomescreenshot.com/image/57650709?key=f7677a38a924ce767485bce5e6be5a8a
+- https://www.awesomescreenshot.com/image/57652168?key=db67d226f4132f1685829587ce0331c1
+- https://www.awesomescreenshot.com/image/57650709?key=f7677a38a924ce767485bce5e6be5a8a

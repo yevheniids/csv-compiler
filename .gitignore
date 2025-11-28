@@ -2,6 +2,7 @@ node_modules/
 .DS_Store
 credentials.json
 .env
+token.json
 /*.csv
 /output/*.csv
 /output/*.json
