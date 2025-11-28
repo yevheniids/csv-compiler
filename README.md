@@ -13,21 +13,20 @@ SHOPIFY_API_KEY=altera_api_key
 
 1. Place source files in `input/` folder
 2. Extract files `node src/extract-sku.js`
-3. Generate CSV: `node src/generate-csv.js` 
+3. Generate CSV: `node src/generate-csv.js`
 4. Import to Shopify: `node src/push-csv.js`
 
 ## Manual Connection Testing
 
-Connect your store via CLI. Enter the command in the terminal:
+1. Connect your store via CLI. Enter the command in the terminal:
 
-npx altera shop add your-shop.myshopify.com
+    npx altera shop add your-shop.myshopify.com
 
-Enter your API key in the terminal.
+    Enter your API key in the terminal.
 
+2. Check the connection:
 
-Check the connection:
-
-npx altera shop test pros-cons-shop-test.myshopify.com
+    npx altera shop test pros-cons-shop-test.myshopify.com
 
 
 ## Test Results
