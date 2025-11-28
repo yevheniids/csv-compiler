@@ -9,12 +9,20 @@
     "step2": "node src/2-merge-data.js",
     "step3": "node src/3-generate-csv.js"
   },
-  "keywords": ["shopify", "csv", "product", "import"],
+  "keywords": [
+    "shopify",
+    "csv",
+    "product",
+    "import"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "dotenv": "^17.2.3",
+    "googleapis": "^105.0.0",
     "mammoth": "^1.6.0",
-    "xlsx": "^0.18.5",
-    "papaparse": "^5.4.1"
+    "papaparse": "^5.4.1",
+    "xlsx": "^0.18.5"
   }
 }

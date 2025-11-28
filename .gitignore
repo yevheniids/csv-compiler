@@ -1,4 +1,11 @@
 node_modules/
-input/
-output/
 .DS_Store
+credentials.json
+.env
+/*.csv
+/output/*.csv
+/output/*.json
+/input/*.csv
+/input/*.docx
+/input/*.xlsx
+/input/*.xls
