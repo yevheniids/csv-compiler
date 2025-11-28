@@ -78,40 +78,6 @@ async function getAllFiles(drive, query = '') {
   return allFiles;
 }
 
-async function listFiles() {
-  const auth = await authorize();
-  const drive = google.drive({version: 'v3', auth});
-  let folders;
-
-  folders = await getAllFiles(drive, "mimeType='application/vnd.google-apps.folder'");
-
-  if (folders.length === 0) {
-    console.log('No folders found.');
-    return;
-  }
-
-  for (const folder of folders) {
-    console.log(`${folder.name}`);
-
-    const images = await getAllFiles(
-      drive,
-      `'${folder.id}' in parents and mimeType contains 'image/'`
-    );
-
-    if (images.length === 0) {
-      console.log('No images found\n');
-    } else {
-      images.forEach((image) => {
-        const shareUrl = `https://drive.google.com/uc?export=download&id=${image.id}`;
-
-        console.log(shareUrl);
-      });
-
-      console.log('');
-    }
-  }
-}
-
 async function updateImageSrc() {
   const auth = await authorize();
   const drive = google.drive({version: 'v3', auth});
@@ -121,7 +87,7 @@ async function updateImageSrc() {
 
   let updatedCount = 0;
   let notFoundCount = 0;
-
+  let additionalImagesCount = 0;
   const folderImageMap = new Map();
 
   for (const folder of folders) {
@@ -131,10 +97,11 @@ async function updateImageSrc() {
     );
 
     if (images.length > 0) {
-      const firstImageUrl = `https://drive.google.com/uc?export=download&id=${images[0].id}`;
-
-      folderImageMap.set(folder.name, firstImageUrl);
-      console.log(`${folder.name} -> ${firstImageUrl}`);
+      const imageUrls = images.map(img =>
+        `https://drive.google.com/uc?export=download&id=${img.id}`
+      );
+      folderImageMap.set(folder.name.toLowerCase(), imageUrls);
+      console.log(`${folder.name} -> ${imageUrls.length} images`);
     }
   }
 
@@ -142,11 +109,29 @@ async function updateImageSrc() {
 
   for (const [skuKey, product] of Object.entries(data)) {
     const sku = String(product.sku || skuKey);
+    const handle = product.Handle || '';
 
-    if (folderImageMap.has(sku)) {
-      product['Image Src'] = folderImageMap.get(sku);
-      updatedCount++;
-      console.log(`Updated SKU ${sku} with image`);
+    if (folderImageMap.has(sku.toLowerCase())) {
+      const imageUrls = folderImageMap.get(sku.toLowerCase());
+
+      if (imageUrls.length > 0) {
+        product['Image Src'] = imageUrls[0];
+        updatedCount++;
+        console.log(`Updated SKU ${sku} with primary image`);
+      }
+
+      for (let i = 1; i < imageUrls.length; i++) {
+        const imageKey = `${sku}_img${i}`;
+
+        data[imageKey] = {
+          sku: sku,
+          Handle: handle,
+          'Image Src': imageUrls[i],
+          'Image Position': i + 1
+        };
+        additionalImagesCount++;
+        console.log(`Added additional image ${i + 1} for SKU ${sku}`);
+      }
     } else {
       notFoundCount++;
       if (notFoundCount <= 10) {
@@ -161,7 +146,8 @@ async function updateImageSrc() {
     'utf-8'
   );
 
-  console.log(`Updated ${updatedCount} products`);
+  console.log(`\nUpdated ${updatedCount} products with primary images`);
+  console.log(`Added ${additionalImagesCount} additional image entries`);
   console.log(`${notFoundCount} products without matching folders`);
   console.log(`Saved to ${EXTRACTED_DATA_PATH}`);
 }

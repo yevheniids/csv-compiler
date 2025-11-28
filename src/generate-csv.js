@@ -159,10 +159,70 @@ async function main() {
   ];
 
   const csvRows = [];
+  const mainRowsByHandle = new Map();
+  const imageEntries = [];
 
   for (const [sku, data] of Object.entries(extractedData)) {
+    if (sku.match(/^.+_img\d+$/)) {
+      imageEntries.push([sku, data]);
+      continue;
+    }
+
     const row = convertToCSVRow(data, metafieldColumns);
+
+    if (row['Image Src'] && !row['Image Position']) {
+      row['Image Position'] = '1';
+    }
+
     csvRows.push(row);
+
+    const handle = row['Handle'] || '';
+    if (handle && !mainRowsByHandle.has(handle)) {
+      mainRowsByHandle.set(handle, row);
+    }
+  }
+
+  for (const [imageKey, imageData] of imageEntries) {
+    const handle = imageData.Handle || '';
+    let mainRow = mainRowsByHandle.get(handle);
+
+    if (!mainRow) {
+      const mainSku = String(imageData.sku || imageKey.replace(/_img\d+$/, ''));
+      const mainSkuLower = mainSku.toLowerCase();
+
+      for (let i = csvRows.length - 1; i >= 0; i--) {
+        const rowSku = String(csvRows[i]['Variant SKU'] || '').toLowerCase();
+        if (rowSku === mainSkuLower) {
+          mainRow = csvRows[i];
+          break;
+        }
+      }
+    }
+
+    if (mainRow) {
+      const imageRow = { ...mainRow };
+
+      imageRow['Image Src'] = imageData['Image Src'] || '';
+      imageRow['Image Position'] = String(imageData['Image Position'] || '');
+      imageRow['Variant SKU'] = '';
+      imageRow['Variant Price'] = '';
+      imageRow['Variant Compare At Price'] = '';
+      imageRow['Variant Inventory Qty'] = '';
+      imageRow['Variant Barcode'] = '';
+      imageRow['Variant Weight'] = '';
+      imageRow['Variant Weight Unit'] = '';
+      imageRow['Option1 Name'] = '';
+      imageRow['Option1 Value'] = '';
+      imageRow['Option2 Name'] = '';
+      imageRow['Option2 Value'] = '';
+      imageRow['Option3 Name'] = '';
+      imageRow['Option3 Value'] = '';
+      csvRows.push(imageRow);
+    } else {
+      const row = convertToCSVRow(imageData, metafieldColumns);
+
+      csvRows.push(row);
+    }
   }
 
   const csv = Papa.unparse(csvRows, {

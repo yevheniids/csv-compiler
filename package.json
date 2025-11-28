@@ -4,10 +4,7 @@
   "description": "Shopify CSV compiler",
   "main": "src/1-extract-sku.js",
   "scripts": {
-    "start": "node src/1-extract-sku.js && node src/2-merge-data.js && node src/3-generate-csv.js",
-    "step1": "node src/1-extract-sku.js",
-    "step2": "node src/2-merge-data.js",
-    "step3": "node src/3-generate-csv.js"
+    "init": "node src/init.js"
   },
   "keywords": [
     "shopify",

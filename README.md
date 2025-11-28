@@ -4,7 +4,9 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 
 ## Installation
 
-Create `.env` file:
+1) Init package dependencies `npm install`
+
+2. Create `.env` file:
 
 - SHOPIFY_STORE=you-shop.myshopify.com
 - SHOPIFY_API_KEY=altera_api_key
@@ -12,10 +14,7 @@ Create `.env` file:
 ## Usage
 
 1. Place source files in `input/` folder
-2. Extract files `node src/extract-sku.js`
-3. Generate CSV: `node src/generate-csv.js`
-4. Add images from Google Drive: `node src/google-drive-images.js`
-5. Import to Shopify: `node src/push-csv.js`
+2. Use the `npm run init` command
 
 ## Manual Connection Testing
 
