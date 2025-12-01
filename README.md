@@ -13,8 +13,10 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 
 ## Usage
 
-1. Place source files in `input/` folder
-2. Use the `npm run init` command
+1. Place source files in `input/` folder. File names must be called: `description.docx`, `tags.xlsx` ,` template.xlsx`
+2. Create the Altera app key and connect it to the App
+3. Connect Google Drive
+4. Use the `npm run init` command
 
 ## Manual Connection Testing
 
@@ -31,3 +33,21 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 
 - https://www.awesomescreenshot.com/image/57652168?key=db67d226f4132f1685829587ce0331c1
 - https://www.awesomescreenshot.com/image/57650709?key=f7677a38a924ce767485bce5e6be5a8a
+
+## App Documentation
+
+- https://support.getaltera.com/en/articles/12538831-how-to-upload-and-download-files-from-shopify-using-the-altera-cli#h_def599fc15
+
+## CLI Commands
+
+**npx altera import create path/to/file.csv** - import a file
+
+Supported entities: articles, blogs, catalogs, customers, events, files, manual_collections, metaobjects, orders, pages, products, shop, menus, redirects, smart_collections, metafield_definitions, metaobject_definitions, discounts, companies, payouts, draft_orders
+
+**npx altera files upload path/to/directory/file** - this uploads all files from the specified local directory to your Shopify store's content files. The CLI will show upload progress and generate a CSV report with details about each uploaded file.
+
+**npx altera files download** - this downloads all files from your Shopify store to your local machine. It creates a local directory with all the files and generates an Excel spreadsheet with file details including names, sizes, URLs, and types.
+
+Available filter options:
+  --media-type - Filter by media type (e.g., image, video)
+  --filename - Filter by text in the filename

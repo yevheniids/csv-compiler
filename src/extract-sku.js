@@ -8,6 +8,33 @@ function normalizeSKU(sku) {
   return String(sku).trim().toUpperCase();
 }
 
+function isValidSKU(sku) {
+  if (!sku) return false;
+  const normalized = normalizeSKU(sku);
+
+  const invalidValues = [
+    'SKU',
+    'VARIANT SKU',
+    'NAME',
+    'TITLE',
+    'HANDLE',
+    'DESCRIPTION',
+    'BODY HTML',
+    'BODY (HTML)',
+    'NAVIGATION',
+    'PORTIONS',
+    'TEA WEIGHT',
+    'PACKAGING',
+    'GIFT TYPE'
+  ];
+
+  if (invalidValues.includes(normalized)) {
+    return false;
+  }
+
+  return normalized.length > 0 && normalized !== '';
+}
+
 function removeEmptyKeys(obj) {
   const result = {};
   for (const [key, value] of Object.entries(obj)) {
@@ -59,7 +86,7 @@ async function parseDocx(filePath) {
         const key = normalizeSKU(row[0]);
         const value = row[1] || '';
 
-        if (key) {
+        if (key && isValidSKU(key)) {
           data[key] = value;
         }
       }
@@ -78,7 +105,7 @@ async function parseDocx(filePath) {
           const key = normalizeSKU(columns[0]);
           const value = columns[1] || '';
 
-          if (key) {
+          if (key && isValidSKU(key)) {
             data[key] = value;
           }
         }
@@ -113,7 +140,6 @@ function parseXlsx(filePath) {
         );
 
         if (skuColumn) {
-          //console.log('Found SKU column in first row:', skuColumn);
           break;
         }
       }
@@ -166,7 +192,7 @@ function parseXlsx(filePath) {
     for (const row of jsonData) {
       const sku = normalizeSKU(row[skuColumn]);
 
-      if (sku) {
+      if (sku && isValidSKU(sku)) {
         const cleanedRow = removeEmptyKeys(row);
 
         data[sku] = {
@@ -197,7 +223,7 @@ async function main() {
   }
 
   const allData = {};
-  const docxPath = path.join(inputDir, 'ready_descriptions.docx');
+  const docxPath = path.join(inputDir, 'descriptions.docx');
 
   if (fs.existsSync(docxPath)) {
     const docxData = await parseDocx(docxPath);
@@ -210,7 +236,7 @@ async function main() {
     }
   }
 
-  const tagsPath = path.join(inputDir, 'product_tags.xlsx');
+  const tagsPath = path.join(inputDir, 'tags.xlsx');
 
   if (fs.existsSync(tagsPath)) {
     const tagsData = parseXlsx(tagsPath);
@@ -237,7 +263,7 @@ async function main() {
     }
   }
 
-  const templatePath = path.join(inputDir, 'Shopify_Template.xlsx');
+  const templatePath = path.join(inputDir, 'template.xlsx');
 
   if (fs.existsSync(templatePath)) {
     const templateData = parseXlsx(templatePath);

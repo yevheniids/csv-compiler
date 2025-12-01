@@ -161,8 +161,13 @@ async function main() {
   const csvRows = [];
   const mainRowsByHandle = new Map();
   const imageEntries = [];
+  const invalidKeys = ['SKU', 'NAME', 'TITLE', 'HANDLE', 'DESCRIPTION'];
 
   for (const [sku, data] of Object.entries(extractedData)) {
+    if (invalidKeys.includes(sku.toUpperCase())) {
+      continue;
+    }
+
     if (sku.match(/^.+_img\d+$/)) {
       imageEntries.push([sku, data]);
       continue;
@@ -218,7 +223,7 @@ async function main() {
       imageRow['Option3 Name'] = '';
       imageRow['Option3 Value'] = '';
       csvRows.push(imageRow);
-    } else {
+    } else if (handle) {
       const row = convertToCSVRow(imageData, metafieldColumns);
 
       csvRows.push(row);
