@@ -16,7 +16,6 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 1. Create the Altera app key and connect it to the App
 2. Connect Google Drive
 3. Use the `npm run start` command
-4. Open the `index.html` and upload files
 
 ## Manual Connection Testing
 
