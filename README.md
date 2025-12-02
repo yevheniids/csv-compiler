@@ -13,10 +13,10 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 
 ## Usage
 
-1. Place source files in `input/` folder. File names must be called: `description.docx`, `tags.xlsx` ,` template.xlsx`
-2. Create the Altera app key and connect it to the App
-3. Connect Google Drive
-4. Use the `npm run init` command
+1. Create the Altera app key and connect it to the App
+2. Connect Google Drive
+3. Use the `npm run start` command
+4. Open the `index.html` and upload files
 
 ## Manual Connection Testing
 
