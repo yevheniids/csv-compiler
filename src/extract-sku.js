@@ -223,84 +223,97 @@ async function main() {
   }
 
   const allData = {};
-  const docxPath = path.join(inputDir, 'descriptions.docx');
+  const files = fs.readdirSync(inputDir).filter(file => {
+    const filePath = path.join(inputDir, file);
+    return fs.statSync(filePath).isFile();
+  });
 
-  if (fs.existsSync(docxPath)) {
-    const docxData = await parseDocx(docxPath);
+  const supportedExtensions = ['.docx', '.xlsx', '.xls', '.csv'];
 
-    for (const [sku, description] of Object.entries(docxData)) {
-      allData[sku] = {
-        sku: sku,
-        description: description
-      };
+  for (const file of files) {
+    const filePath = path.join(inputDir, file);
+    const ext = path.extname(file).toLowerCase();
+
+    if (!supportedExtensions.includes(ext)) {
+      console.log(`Skipping unsupported file: ${file}`);
+      continue;
     }
-  }
 
-  const tagsPath = path.join(inputDir, 'tags.xlsx');
+    try {
+      if (ext === '.docx') {
+        const docxData = await parseDocx(filePath);
 
-  if (fs.existsSync(tagsPath)) {
-    const tagsData = parseXlsx(tagsPath);
-
-    for (const [sku, data] of Object.entries(tagsData)) {
-      const bodyHtml = data['Body (HTML)'] || data['Body (HTML)'] || '';
-      const { sku: _, 'Body (HTML)': __, ...restData } = data;
-      const cleanedRestData = removeEmptyKeys(restData);
-
-      if (allData[sku]) {
-        if (bodyHtml) {
-          allData[sku].description = bodyHtml;
-        } else if (!allData[sku].description) {
-          allData[sku].description = '';
+        for (const [sku, description] of Object.entries(docxData)) {
+          if (allData[sku]) {
+            if (!allData[sku].description) {
+              allData[sku].description = description;
+            }
+          } else {
+            allData[sku] = {
+              sku: sku,
+              description: description
+            };
+          }
         }
+      } else if (ext === '.xlsx' || ext === '.xls') {
+        const xlsxData = parseXlsx(filePath);
 
-        Object.assign(allData[sku], cleanedRestData);
-      } else {
-        allData[sku] = {
-          ...cleanedRestData,
-          description: bodyHtml || ''
-        };
-      }
-    }
-  }
+        for (const [sku, data] of Object.entries(xlsxData)) {
+          const bodyHtml = data['Body (HTML)'] || data['Body (HTML)'] || '';
+          const { sku: _, 'Body (HTML)': __, ...restData } = data;
+          const cleanedRestData = removeEmptyKeys(restData);
 
-  const templatePath = path.join(inputDir, 'template.xlsx');
+          if (allData[sku]) {
+            if (bodyHtml) {
+              allData[sku].description = bodyHtml;
+            } else if (!allData[sku].description) {
+              allData[sku].description = '';
+            }
 
-  if (fs.existsSync(templatePath)) {
-    const templateData = parseXlsx(templatePath);
-
-    for (const [sku, data] of Object.entries(templateData)) {
-      const bodyHtml = data['Body (HTML)'] || data['Body (HTML)'] || '';
-      const { sku: _, 'Body (HTML)': __, ...restData } = data;
-      const cleanedRestData = removeEmptyKeys(restData);
-
-      if (allData[sku]) {
-        if (bodyHtml) {
-          allData[sku].description = bodyHtml;
-        } else if (!allData[sku].description) {
-          allData[sku].description = '';
+            Object.assign(allData[sku], cleanedRestData);
+          } else {
+            allData[sku] = {
+              sku: sku,
+              ...cleanedRestData,
+              description: bodyHtml || ''
+            };
+          }
         }
+      } else if (ext === '.csv') {
+        const csvData = parseXlsx(filePath);
 
-        Object.assign(allData[sku], cleanedRestData);
-      } else {
-        allData[sku] = {
-          ...cleanedRestData,
-          description: bodyHtml || ''
-        };
+        for (const [sku, data] of Object.entries(csvData)) {
+          const bodyHtml = data['Body (HTML)'] || data['Body (HTML)'] || '';
+          const { sku: _, 'Body (HTML)': __, ...restData } = data;
+          const cleanedRestData = removeEmptyKeys(restData);
+
+          if (allData[sku]) {
+            if (bodyHtml) {
+              allData[sku].description = bodyHtml;
+            } else if (!allData[sku].description) {
+              allData[sku].description = '';
+            }
+
+            Object.assign(allData[sku], cleanedRestData);
+          } else {
+            allData[sku] = {
+              sku: sku,
+              ...cleanedRestData,
+              description: bodyHtml || ''
+            };
+          }
+        }
       }
+    } catch (error) {
+      console.error(`Error processing file ${file}:`, error.message);
     }
   }
 
   for (const [sku, data] of Object.entries(allData)) {
     const nameValue = data['Name'] || data['name'];
-    const titleValue = data['Title'] || data['title'];
 
     if (nameValue) {
-      if (titleValue !== undefined) {
-        data['Title'] = nameValue;
-      } else {
-        data['Title'] = nameValue;
-      }
-
+      data['Title'] = nameValue;
       delete data['Name'];
       delete data['name'];
     }

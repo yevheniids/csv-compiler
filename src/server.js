@@ -2,10 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const { main } = require("./init.js");
+const { exec } = require("child_process");
+const path = require("path");
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '..')));
 
 global.progressStatus = null;
 
@@ -60,4 +63,24 @@ app.get("/api/status", (req, res) => {
   });
 });
 
-app.listen(3000, () => console.log("Server is running on http://localhost:3000"));
+app.listen(3000, () => {
+  console.log("Server is running on http://localhost:3000");
+
+  const url = "http://localhost:3000";
+  const platform = process.platform;
+
+  let command;
+  if (platform === 'darwin') {
+    command = `open ${url}`;
+  } else if (platform === 'win32') {
+    command = `start ${url}`;
+  } else {
+    command = `xdg-open ${url}`;
+  }
+
+  exec(command, (error) => {
+    if (error) {
+      console.log(`Please open ${url} in your browser`);
+    }
+  });
+});
