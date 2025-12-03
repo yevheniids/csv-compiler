@@ -62,6 +62,11 @@
   </form>
   <div id="status-container">
     <div id="status-message"></div>
+    <div id="csv-link-container" style="margin-top: 15px; display: none;">
+      <a id="csv-link" href="#" download style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+        📥 Download CSV File
+      </a>
+    </div>
   </div>
 
   <script>
@@ -77,6 +82,7 @@
 
       statusContainer.style.display = "block";
       statusMessage.textContent = "";
+      document.querySelector("#csv-link-container").style.display = "none";
 
       if (eventSource) {
         eventSource.close();
@@ -86,19 +92,29 @@
 
       eventSource.onmessage = function(event) {
         const data = JSON.parse(event.data);
+        const csvLinkContainer = document.querySelector("#csv-link-container");
+        const csvLink = document.querySelector("#csv-link");
 
         statusMessage.classList.remove('status-success', 'status-error');
 
         if (data.type === 'pipeline_complete') {
           eventSource.close();
           statusMessage.textContent = `Completed: ${data.message}`;
+          statusMessage.classList.add('status-success');
+
+          if (data.csvUrl) {
+            csvLink.href = data.csvUrl;
+            csvLinkContainer.style.display = 'block';
+          }
         } else if (data.type === 'pipeline_error') {
           eventSource.close();
           statusMessage.textContent = `Error: ${data.message}`;
           statusMessage.classList.add('status-error');
+          csvLinkContainer.style.display = 'none';
         } else {
           statusMessage.textContent = `▶ ${data.message}`;
           statusMessage.classList.add('status-success');
+          csvLinkContainer.style.display = 'none';
         }
       };
 

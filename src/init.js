@@ -100,9 +100,10 @@ async function main(onProgress) {
     console.log('='.repeat(60) + '\n');
 
     if (onProgress) {
-      onProgress({ 
+      onProgress({
         type: 'pipeline_complete',
-        message: 'All scripts completed successfully!'
+        message: 'All scripts completed successfully!',
+        csvUrl: '/output/shopify-products.csv'
       });
     }
   } catch (error) {

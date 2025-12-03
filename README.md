@@ -14,8 +14,8 @@ Tool for compiling and importing products to Shopify from multiple data sources 
 ## Usage
 
 1. Create the Altera app key and connect it to the App
-2. Connect Google Drive
-3. Use the `npm run start` command
+2. Connect Google Drive. Create your environment using this documentation https://developers.google.com/workspace/drive/api/quickstart/nodejs The credentials.json file has to be in the main project folder. At first start the app asks to connect your Google account. After a successful authorization, it will save your account data in the token.json file.
+3. Use the `npm run start` command. If the .env file doesn't exist, the generated file won't be downloaded to the Altera app and you will see the button for downloading https://tinyurl.com/29gal4u9
 
 ## Manual Connection Testing
 

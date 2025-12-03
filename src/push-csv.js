@@ -1,6 +1,5 @@
 require('dotenv').config();
 const { spawn } = require('child_process');
-const path = require('path');
 
 const SHOPIFY_STORE = process.env.SHOPIFY_STORE;
 const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY;
@@ -58,6 +57,10 @@ function execCommandSimple(command, args) {
 }
 
 async function main() {
+  if (!SHOPIFY_STORE || !SHOPIFY_API_KEY) {
+    return;
+  }
+
   try {
     console.log('🚀 Starting Altera CLI commands...');
     console.log(`Store: ${SHOPIFY_STORE}`);
